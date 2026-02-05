@@ -13,5 +13,4 @@
 
 
 
-    emailEmitter.emit("Sendemail",email)
 
