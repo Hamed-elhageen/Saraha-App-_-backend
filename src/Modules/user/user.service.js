@@ -5,7 +5,7 @@ import { decrypt, encrypt } from '../../Utils/encryption/enctypt.js';
 import { compare, hash } from '../../Utils/hashing/hash.js';
 
 export const profile=async(req,res)=>{
-        let user = req.user;                                                  //this user is got from the request object , when i add it in the auth middleware
+        let user = req.user;                                                                                                                   //this user is got from the request object , when i add it in the auth middleware
         return res.status(200).json({success:true,message:"user found successfully" , data:{...user,phone:decrypt({encryptedText:user.phone})}})
 }
 

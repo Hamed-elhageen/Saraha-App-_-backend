@@ -12,10 +12,6 @@ export const register =async(req,res,next)=>{
         if(user){
             return next(new Error("user with the same email already exists",{cause:409}))
         }
-        let user2=await User.findOne({userName})
-                if(user2){
-            return next(new Error("user with the same userName already exists",{cause:409}))
-        }
         //creating the user in the database
         await User.create({userName,
             email,
@@ -25,14 +21,8 @@ export const register =async(req,res,next)=>{
         //send emails 
         //take care , first we have a file to use node mailer to send email and this file is a function called sendEmail and takes from me {to: , subject: , html : } and you call this function and pass to it its parameters to make it work , in first we was calling this function here directly but it was taking alot of time on post man , the best practice is to make the call of this function in an event and make to it trigger here when you want to use it , so it will be run in the background and wont take alot of time , so see the file email.event.js which makes this
         emailEmitter.emit("sendEmail",email);
-        return  res.status(201).json({success:true,message:"user created successfully"})
+        return  res.status(201).json({success:true,message:"user created successfully , Acivate your acount now "})
 }
-
-
-
-
-
-
 
 
 
@@ -53,19 +43,8 @@ export const login =async(req,res, next)=>{
         }
         //now every thing is good , create a token and give it to the user
         const token = jwt.sign({id:user._id, email:user.email},process.env.TOKEN_KEY)
-
-        //activating acount if it was deleted
-        if(user.isActivated==true){
-            user.isActivated=false;
-            await user.save();
-        }
-
         return res.status(200).json({success:true,message:"user logged in successfully" , data:user, token})
 }
-
-
-
-
 
 
 

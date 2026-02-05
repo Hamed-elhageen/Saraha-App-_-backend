@@ -10,7 +10,6 @@ export const roles={
 const userSchema = mongoose.Schema({
     userName:{
         type:String,
-        unique:[true,"a user with the same userName  exists"],
         required:[true, "userName is required"],
         minLength:[2,"userName cant be less than 2 letters"],
         maxLength:[20,"userName cant be more than 20 letters"],
@@ -46,7 +45,7 @@ const userSchema = mongoose.Schema({
     },
     changedAt:Date
 },{
-    timestamps:true                                                   //this optional object is to add created at and updated at automatically
+    timestamps:true                                                                                  //this optional object is to add created at and updated at automatically
 })
 
 const User= mongoose.model("User",userSchema)

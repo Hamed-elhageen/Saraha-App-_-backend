@@ -9,7 +9,7 @@ let messageSchema=mongoose.Schema({
     },
     sender:{
         type:Types.ObjectId,
-        ref:"User"                                                                                                  //this is for when making join not for making relationship , when making join and get the message we will got the user with this id 
+        ref:"User"                                                                                                              //this is for when making join not for making relationship , when making join and get the message we will got the user with this id 
     },
     reciever:{
         type:Types.ObjectId,

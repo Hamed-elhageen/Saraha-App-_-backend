@@ -32,7 +32,7 @@ userRouter.patch("/changePassword",
 
 
 
-       //change user password
+       //deactivate user acount
 userRouter.patch("/deactivate",                                                        //soft delete , make is deleted =false
     asyncHandler(isAuthinticated),
     isAuthorized([roles.user,roles.admin]),
