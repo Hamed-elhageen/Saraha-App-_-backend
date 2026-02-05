@@ -11,21 +11,7 @@ export const sendMessage=async(req,res,next)=>{
     }
     await Message.create({content,reciever,sender:senderUser._id});
     return res.status(201).json({success:true,message:"message send successfully"})
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -44,9 +30,6 @@ export const getSingleMessage=async(req,res,next)=>{
     }
     return res.status(200).json({success:true,message:"message found successfully",data:msg})
 }
-
-
-
 
 
 

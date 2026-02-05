@@ -12,8 +12,6 @@ export const profile=async(req,res)=>{
 
 
 
-
-
 export const updateProfile=async(req,res,next)=>{
         //first , the validations are done in the validation middlerware and you can pass the req.body without any fear because is passed the validation and all of it is good now 
         if(req.body.phone){
@@ -32,14 +30,14 @@ export const updateProfile=async(req,res,next)=>{
 
 export const changePassword=async(req,res,next)=>{
     //validations are done on old and new passoword if they are the same and if password and confirm password are not the same 
-    //now its time to check if this old password is correct or now , and you have the user in req.user  gave to you from authentication
+    //now its time to check if this old password is correct or not , and you have the user in req.user  gave to you from authentication
     let user=await User.findById(req.user._id)
     let {oldPassword,newPassword}=req.body;
     let oldPasswordCheck= compare({text:oldPassword , hashedText:user.password});
     if(!oldPasswordCheck){
         return next(new Error("invalid old password",{cause:403}))
     }
-    let updatedUser=await User.findByIdAndUpdate(req.user._id,{password:hash({text:newPassword}),changedAt:Date.now()});
+    let updatedUser=await User.findByIdAndUpdate(req.user._id,{password:hash({text:newPassword}),changedAt:Date.now()},{new:true, runValidators:true});
     return res.status(200).json({success:true,message:"password updated successfully", data:updatedUser})
 }
 
@@ -49,8 +47,7 @@ export const changePassword=async(req,res,next)=>{
 
 
 export const deactivateAcount=async(req,res,next)=>{
-    let deletedAcount = await User.findByIdAndUpdate(req.user._id,{isActivated:false},{new:true , runValidators:true})
-    return res.status(200).json({success:true,message:"account deactivated successfully" , data:deletedAcount})
-
+    let deActivatedAcount = await User.findByIdAndUpdate(req.user._id,{isActivated:false},{new:true , runValidators:true})
+    return res.status(200).json({success:true,message:"account deactivated successfully" , data:deActivatedAcount})
     //acount will be activated successfully and is deleted =false if you make login =>thatl handeled in login service
 }
