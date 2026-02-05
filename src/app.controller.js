@@ -8,6 +8,10 @@ const bootstrap=async(app,express)=>{
     await connectDB();
     app.use(express.json());
     app.use(cors())
+    app.get("/", (req, res) => {
+  res.json({ message: "API is running 🚀" });
+});
+
     app.use("/auth",authRouter)
     app.use("/user",userRouter)
     app.use("/message",messageRouter)
