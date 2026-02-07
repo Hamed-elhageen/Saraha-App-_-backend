@@ -1,13 +1,21 @@
-// # when my project was local on my device , for gmail : my device is secure , so it send emails with no problems  , but when the project become on railway , gmail refuse that any outer server send email for security , so on railway i will use brevo which is allowed to send emials, i will send email to him and he will send it to the user
+//here on production i used only brevo to send emails , since railway cant send emails , gmail consider it un safe , so  we used brevo to send email on railway
 import brevo from '@getbrevo/brevo'
+
 
 const {
   TransactionalEmailsApi,
   TransactionalEmailsApiApiKeys
 } = brevo
 
-// init brevo client مرة واحدة
 const brevoClient = new TransactionalEmailsApi()
+
+if (!process.env.BREVO_API_KEY) {
+  throw new Error('BREVO_API_KEY is missing')
+}
+
+if (!process.env.MAIL_FROM) {
+  throw new Error('MAIL_FROM is missing')
+}
 
 brevoClient.setApiKey(
   TransactionalEmailsApiApiKeys.apiKey,
@@ -19,7 +27,7 @@ const sendEmail = async ({ to, subject, html }) => {
     const message = {
       sender: {
         name: 'Saraha App',
-        email: process.env.MAIL_FROM // verified sender
+        email: process.env.MAIL_FROM
       },
       to: [{ email: to }],
       subject,
@@ -28,12 +36,15 @@ const sendEmail = async ({ to, subject, html }) => {
 
     const result = await brevoClient.sendTransacEmail(message)
 
-    // لو وصل هنا → الإيميل اتبعت
+    if (!result?.body?.messageId) {
+      throw new Error('Email not accepted by Brevo')
+    }
+
     return true
   } catch (error) {
     console.error(
       '❌ Email send failed:',
-      error.response?.body || error
+      error.response?.body || error.message
     )
     return false
   }
