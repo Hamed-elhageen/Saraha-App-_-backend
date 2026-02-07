@@ -5,10 +5,14 @@ const sendEmail=async({to,subject,html})=>{
         host:'smtp-relay.brevo.com',
         port:587,
         secure:false,
+        requireTLS: true,
         auth:{
             user:process.env.BREVO_EMAIL,
             pass:process.env.BREVO_SMTP_KEY
-        }
+        },
+        connectionTimeout: 10000, // 10 seconds
+        greetingTimeout: 10000,
+        socketTimeout: 10000
     })
 const info=await transporter.sendMail({
     from:`Saraha app <${process.env.BREVO_EMAIL}>`,
