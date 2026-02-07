@@ -1,25 +1,42 @@
 // # when my project was local on my device , for gmail : my device is secure , so it send emails with no problems  , but when the project become on railway , gmail refuse that any outer server send email for security , so on railway i will use brevo which is allowed to send emials, i will send email to him and he will send it to the user
-import nodemailer from 'nodemailer'
-const sendEmail=async({to,subject,html})=>{
-    const transporter=nodemailer.createTransport({
-        host:'smtp-relay.brevo.com',
-        port:465,
-        secure:true,
-        requireTLS: true,
-        auth:{
-            user:process.env.BREVO_EMAIL,
-            pass:process.env.BREVO_SMTP_KEY
-        },
-        connectionTimeout: 10000, // 10 seconds
-        greetingTimeout: 10000,
-        socketTimeout: 10000
-    })
-const info=await transporter.sendMail({
-    from:`Saraha app <${process.env.BREVO_EMAIL}>`,
-    to,
-    subject,
-    html
-})
-return info.rejected.length==0?true:false;                                            //that means that if it returns true , that means that the email has been sent
+import brevo from '@getbrevo/brevo'
+
+const {
+  TransactionalEmailsApi,
+  TransactionalEmailsApiApiKeys
+} = brevo
+
+// init brevo client مرة واحدة
+const brevoClient = new TransactionalEmailsApi()
+
+brevoClient.setApiKey(
+  TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+)
+
+const sendEmail = async ({ to, subject, html }) => {
+  try {
+    const message = {
+      sender: {
+        name: 'Saraha App',
+        email: process.env.MAIL_FROM // verified sender
+      },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html
+    }
+
+    const result = await brevoClient.sendTransacEmail(message)
+
+    // لو وصل هنا → الإيميل اتبعت
+    return true
+  } catch (error) {
+    console.error(
+      '❌ Email send failed:',
+      error.response?.body || error
+    )
+    return false
+  }
 }
-export default sendEmail;
+
+export default sendEmail
